@@ -4,15 +4,12 @@ var db = require("mongojs").connect(databaseUrl, collections);
 
 var riotapi = require('./riotapi');
 
-// db.users.find({}, function(err, users) {
-// 	if (err || (users.length == 0)) {
-// 		console.log("No users found.");
-// 	} else {
-// 		users.forEach(function(user) {
-// 			console.log(user)
-// 		});
-// 	}
-// });
+function close_mongo() {
+	if (db !== null) {
+		console.log("Attempting to close mongo.");
+		db.close();
+	}
+}
 
 function add_user(user, region, callback) {
 	riotapi.get_summoner_id(user, region, function(err, id) {
@@ -102,5 +99,6 @@ function get_random_game(callback) {
 
 module.exports = {
 	add_user: add_user,
-	get_random_game: get_random_game
+	get_random_game: get_random_game,
+	close_mongo: close_mongo
 };

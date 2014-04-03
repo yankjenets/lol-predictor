@@ -62,4 +62,26 @@ app.get("/static/js/:staticFilename", function (request, response) {
 });
 
 // Finally, activate the server at port 8889
-app.listen(8889);
+var server = app.listen(8889);
+
+function cleanup() {
+	console.log("Attempting to cleanup.");
+	server.close();
+	data.close_mongo();
+	process.exit();
+
+	setTimeout(function() {
+		console.log("Timed out while attempting to clean up.");
+		process.exit(1);
+	}, 30 * 1000); // 30 seconds
+}
+
+process.on("uncaughtException", function (err) {
+	console.log("Uncaught exception: " + err);
+	cleanup();
+});
+
+process.on("SIGINT", function (err) {
+	console.log("SIGINT sent.");
+	cleanup();
+});
