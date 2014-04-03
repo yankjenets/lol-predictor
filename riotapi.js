@@ -9,7 +9,11 @@ module.exports = {
 
 function get_summoner_id(name, region, callback) {
 	LolApi.Summoner.getByName(name, region, function(err, summoner) {
-		callback(err, summoner[name].id);
+		if (err) {
+			callback(err, null);
+		} else {
+			callback(err, summoner[name].id);
+		}
 	});
 }
 

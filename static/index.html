@@ -1,10 +1,33 @@
-<html>
-	<header>
-		<title>LoL Prediction</title>
-		<script src="jquery-1.9.0.js"></script>
-		<script src="main.js"></script>
-	</header>
-	<body>
-		Hello world
-	</body>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <title>LoL Predictor</title>
+	    <link href="css/bootstrap.min.css" rel="stylesheet">
+	    <script src="js/jquery-1.9.0.js"></script>
+	   	<script src="js/bootstrap.min.js"></script>
+	    <script src="js/main.js"></script>
+  	</head>
+  	<body>
+
+	<form role="form">
+		<div class="form-group">
+			<label for="summoner-id">Summoner ID</label>
+			<input type="text" class="form-control" id="summoner-id" placeholder="TSM Dyrus">
+		</div>
+		<select class="form-control" id="region">
+			<option>na</option>
+			<option>br</option>
+			<option>euw</option>
+			<option>eune</option>
+			<option>lan</option>
+			<option>las</option>
+			<option>oce</option>
+		</select>
+		<button type="button" id="add-summoner" class="btn btn-default">Add summoner</button>
+	</form>
+
+  	</body>
 </html>

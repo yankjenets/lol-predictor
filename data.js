@@ -14,16 +14,23 @@ var riotapi = require('./riotapi');
 // 	}
 // });
 
-function add_user(user, region) {
+function add_user(user, region, callback) {
 	riotapi.get_summoner_id(user, region, function(err, id) {
 		if (err) {
 			console.log("User does not exist.");
+			callback({name: "RiotAPI error", err: err.toString()}, null);
 		} else {
 			var new_user = {username: user, region: region, _id: region + id};
-			db.users.save(new_user, function(err, saved) {
-				if (err || !saved) {
-					console.log("User " + user + " not saved.");
+			db.users.insert(new_user, function(err2, obj) {
+				if (err2) {
+					// ugh why isn't Mongo consistent with error messages
+					if (err2.name === "MongoError") {
+						callback(err2, null);
+					} else {
+						callback({name: "MongoError", err: err2.toString()}, null);
+					}
 				} else {
+					callback(null, obj);
 					console.log("New user " + user + " saved.");
 				}
 			});
