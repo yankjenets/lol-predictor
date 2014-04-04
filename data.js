@@ -75,7 +75,7 @@ function _refresh_games() {
 
 // 0 (inclusive) --> n (exclusive)
 function _rand(n) {
-	return Math.floor(Math.random * n);
+	return Math.floor(Math.random() * n);
 }
 
 function get_random_game(callback) {
@@ -84,7 +84,6 @@ function get_random_game(callback) {
 			console.log("Could not get games.");
 			callback(err, null);
 		} else {
-			console.log(games);
 			var length = games.length;
 			if (length > 0) {
 				var index = _rand(length);

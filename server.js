@@ -3,6 +3,8 @@ var data = require('./data');
 var express = require("express");	// imports express
 var app = express();				// create a new instance of express
 
+var http = require("http");
+
 // the bodyParser middleware allows us to parse the
 // body of a request
 app.use(express.urlencoded())
@@ -24,7 +26,6 @@ app.put('/add_summoner', function(request, response) {
 				error: err
 			});
 		} else {
-			console.log("no error");
 			response.send({
 				error: null
 			});
@@ -33,19 +34,64 @@ app.put('/add_summoner', function(request, response) {
 });
 
 app.get('/recent_game', function(request, response) {
-	//LolApi.Summoner.getByName('yankjenets', 'na', function(err, summoner) {
-	LolApi.Summoner.getByName(data.get_user(), 'na', function(err, summoner) {
-		if (!err) {
+	data.get_random_game(function(err, game) {
+		if (err) {
+			console.log(err);
 			response.send({
-				player: summoner,
-				success: true
+				error: err
 			});
 		} else {
-			reponse.send({
-				success: false
+			console.log("THe game: " + game);
+			response.send({
+				error: null,
+				game: game
 			});
 		}
-	})
+	});
+});
+
+app.get('/champ_ids', function (request, response) {
+	var locale = request.query.locale;
+	var URL = "http://prod.api.pvp.net/api/lol/static-data/na/v1.1/champion?locale=" +
+			  locale + "&champData=keys&api_key=1d4576bf-67fe-4d39-a522-34b80594a9fb";
+	var jsonObj = '';
+	http.get(URL, function(res) {
+		res.setEncoding('utf8');
+		res.on('data', function (chunk) {
+			jsonObj += chunk;
+		});	
+		res.on('error', function(error) {
+			response.send({
+				name: "RESTError",
+				err: error
+			});
+		});
+		res.on('end', function () {
+            try {
+                jsonObj = JSON.parse(jsonObj);
+            } catch (e) {
+                response.send({
+                	error: {
+                		name: "RESTError",
+                		err: res.statusCode
+                	}
+                });            
+            }
+            if (jsonObj.status && jsonObj.status.message !== 200) {
+                response.send({
+                	error: {
+                		name: "RESTError",
+                		err: jsonObj.status.message
+                	}
+                });
+            } else {
+                response.send({
+                	data: jsonObj,
+                	error: null
+                });
+            }
+        });
+	});
 });
 
 // This is for serving files in the static directory
