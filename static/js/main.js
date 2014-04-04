@@ -2,6 +2,8 @@ var champ_list = null;
 var BLUE_TEAM = 100;
 var PURPLE_TEAM = 200;
 var current_game = null;
+var total_correct = 0.0;
+var total_guessed = 0.0;
 
 $(function() {
 	$("#add-summoner").click(function() {
@@ -25,10 +27,12 @@ $(function() {
 
 function guess_team(team) {
 	if (current_game != null) {
+		total_guessed += 1;
 		if (current_game.winner == team) {
-			$("#result").text("Correct!");
+			total_correct += 1;
+			$("#result").text("Correct!  Current percentage: " + total_correct / total_guessed * 100 + "%");
 		} else {
-			$("#result").text("Incorrect :(");
+			$("#result").text("Incorrect :( Current percentage: " + total_correct / total_guessed * 100 + "%");
 		}
 		random_game();
 	}
