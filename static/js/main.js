@@ -1,20 +1,24 @@
-function get() {
-	$.ajax({
-		type: "get",
-		url: "/recent_game",
-		success: function(data) {
-			console.log(data);
-		}
-	});
-}
+var champ_list = null;
 
 $(function() {
 	$("#add-summoner").click(function() {
 		add_summoner();
 	});
 
+	$("#random-game").click(function() {
+		random_game();
+	});
+
 	initialize_champ_list();
 });
+
+function sanitize_champ_list(obj) {
+	var result = {};
+	for (var key in obj.keys) {
+		result[key] = obj.data[obj.keys[key]].name;
+	}
+	return result;
+}
 
 function initialize_champ_list() {
 	var l_lang;
@@ -32,8 +36,10 @@ function initialize_champ_list() {
 			locale: l_lang
 		},
 		url: "/champ_ids",
-		success: function(data) {
-			console.log(data);
+		success: function(response) {
+			if (!response.error) {
+				champ_list = sanitize_champ_list(response.data);
+			}
 		}
 	});
 }
@@ -80,9 +86,25 @@ function random_game() {
 		success: function(response) {
 			if (!response.error) {
 				console.log(response.game);
+				set_game(response.game);
 			} else {
 				console.log(response.error);
 			}
 		}
 	});
+}
+
+function set_game(game) {
+	$("#col1").empty();
+	$("#col2").empty();
+	$("#col1").text("Blue Team");
+	$("#col2").text("Purple Team");
+	for (var character in game.blue_characters) {
+		var div = $("<div></div>").text(champ_list[game.blue_characters[character]]);
+		$("#col1").append(div);
+	}
+	for (var character in game.purple_characters) {
+		var div = $("<div></div>").text(champ_list[game.purple_characters[character]]);
+		$("#col2").append(div);
+	}
 }
