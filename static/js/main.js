@@ -1,4 +1,7 @@
 var champ_list = null;
+var BLUE_TEAM = 100;
+var PURPLE_TEAM = 200;
+var current_game = null;
 
 $(function() {
 	$("#add-summoner").click(function() {
@@ -10,7 +13,26 @@ $(function() {
 	});
 
 	initialize_champ_list();
+
+	$("#col1").click(function() {
+		guess_team(BLUE_TEAM);
+	});
+
+	$("#col2").click(function() {
+		guess_team(PURPLE_TEAM);
+	});
 });
+
+function guess_team(team) {
+	if (current_game != null) {
+		if (current_game.winner == team) {
+			$("#result").text("Correct!");
+		} else {
+			$("#result").text("Incorrect :(");
+		}
+		random_game();
+	}
+}
 
 function sanitize_champ_list(obj) {
 	var result = {};
@@ -39,6 +61,7 @@ function initialize_champ_list() {
 		success: function(response) {
 			if (!response.error) {
 				champ_list = sanitize_champ_list(response.data);
+				random_game();
 			}
 		}
 	});
@@ -95,6 +118,7 @@ function random_game() {
 }
 
 function set_game(game) {
+	current_game = game;
 	$("#col1").empty();
 	$("#col2").empty();
 	$("#col1").text("Blue Team");
